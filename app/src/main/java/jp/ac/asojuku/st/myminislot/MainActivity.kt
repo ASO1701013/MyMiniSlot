@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     var myCoins = 0;
-    var bets = 0;
+    var bets = 10;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +28,12 @@ class MainActivity : AppCompatActivity() {
         btn_start.setOnClickListener { onStartButtonTapped(it) }
     }
 
+    override fun onResume() {
+        super.onResume()
+        readData()
+        updateScreen()
+    }
+
 
     fun onResetButtonTapped() {
         myCoins = 1000;
@@ -42,14 +48,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun onBetButtonTapped(bet:Int) {
+    fun onBetButtonTapped(bet: Int) {
         bets += bet
-        if(bets < 10){
+        if (bets < 10) {
             bets = 10
         }
         updateScreen()
     }
-
 
 
     fun onStartButtonTapped(view: View?) {
