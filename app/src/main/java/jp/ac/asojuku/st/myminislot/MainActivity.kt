@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     var myCoins = 0;
-    var bets = 10;
+    var bets = 100;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         btn_reset.setOnClickListener { onResetButtonTapped() }
         btn_bet_10up.setOnClickListener { onBetButtonTapped(10) }
+        btn_bet_100up.setOnClickListener { onBetButtonTapped(100) }
         btn_bet_10down.setOnClickListener { onBetButtonTapped(-10) }
         btn_start.setOnClickListener { onStartButtonTapped(it) }
     }

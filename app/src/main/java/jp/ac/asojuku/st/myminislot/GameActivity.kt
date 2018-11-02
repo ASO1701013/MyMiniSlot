@@ -50,7 +50,7 @@ class GameActivity : AppCompatActivity() {
 
 
     val markSize = marks.size //ランダム用
-    var reel = arrayOf(-1, -1, -1, -1) //0以上でボタンを押した状態
+    var reel = arrayOf(-1,-1,-1, -1) //0以上でボタンを押した状態
     var stopCnt = 0 //いくつ止めたか判定用
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,10 +106,8 @@ class GameActivity : AppCompatActivity() {
 
 
             //すでに押されていないか判定
-            if (reel[reelNo] >= 0) {
+            if (!reelIsStarted[reelNo]) {
                 str_comment.text = "This Button is stopped..."//すでに押されている場合（特に何もしない）
-
-                runReel(1)
 
             } else {
 //                var selectMark = (Math.random() * markSize).toInt()
@@ -184,7 +182,7 @@ class GameActivity : AppCompatActivity() {
     fun nextGame() {
         //変数のリセット
         stopCnt = 0
-        reel = arrayOf(-1, -1, -1, -1)
+//        reel = arrayOf(-1, -1, -1, -1) //乱数で一つ選択していた場合
 
         //画像のリセット
         val image = R.drawable.question
@@ -243,33 +241,40 @@ class GameActivity : AppCompatActivity() {
     fun runReel(reelNo: Int) {
 
         var thread = Thread(Runnable {
-
-            while (reelIsStarted[reelNo]) {
-                for (i in 0..reels[reelNo].size - 1) {
-                    if(!reelIsStarted[reelNo]){
-                        break
-                    }
-                    val selectedMark = reels[reelNo][i]//マークを取得
-                    //画像のアドレスを取得
-                    var imageAddr = Integer.parseInt((marks[selectedMark]["image"].toString()))
-                    reelMark[reelNo] = reels[reelNo][i] //今のリールを取得
-                    mHandler.post {
-                        when (reelNo) {
-                            0 -> img_slot_left.setImageResource(imageAddr)
-                            1 -> img_slot_center.setImageResource(imageAddr)
-                            2 -> img_slot_right.setImageResource(imageAddr)
-                        }
-                    }
-
-
-                    Thread.sleep(100)
-                }
+            var i = reel[reelNo]
+            if(i<0){
+                i=0
             }
+            while (reelIsStarted[reelNo]) {
+                //リ1ールの最後に到達していた場合ゼロに
+                if (i > reels[reelNo].size - 1) {
+                    i = 0
+                }
+                if (!reelIsStarted[reelNo]) {
+                    break
+                }
+                val selectedMark = reels[reelNo][i]//マークを取得
+                //画像のアドレスを取得
+                var imageAddr = Integer.parseInt((marks[selectedMark]["image"].toString()))
+                reelMark[reelNo] = reels[reelNo][i] //今のリールを取得
+                mHandler.post {
+                    when (reelNo) {
+                        0 -> img_slot_left.setImageResource(imageAddr)
+                        1 -> img_slot_center.setImageResource(imageAddr)
+                        2 -> img_slot_right.setImageResource(imageAddr)
+                    }
+                }
+
+                i++
+
+                Thread.sleep(100)
+            }
+
         })
         thread.start()
     }
 
-    //ランダムな値を用いて柄を止める処理（廃止）
+//ランダムな値を用いて柄を止める処理（廃止）
 //    fun selectMark() {
 //        var selectMark = (Math.random() * markSize).toInt()
 //        val imageResources = Integer.parseInt((marks[selectMark]["image"].toString()))
