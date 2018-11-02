@@ -23,15 +23,15 @@ class MainActivity : AppCompatActivity() {
         updateScreen()
 
         btn_reset.setOnClickListener { onResetButtonTapped() }
-        btn_bet_10up.setOnClickListener { onBetUp10ButtonTapped() }
-        btn_bet_10down.setOnClickListener { onBetdown10ButtonTapped() }
+        btn_bet_10up.setOnClickListener { onBetButtonTapped(10) }
+        btn_bet_10down.setOnClickListener { onBetButtonTapped(-10) }
         btn_start.setOnClickListener { onStartButtonTapped(it) }
     }
 
 
     fun onResetButtonTapped() {
         myCoins = 1000;
-        bets = 0;
+        bets = 10;
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         //共有プリファレンスの更新用にをエディタを用意
         val editor = pref.edit()
@@ -42,17 +42,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun onBetUp10ButtonTapped() {
-        bets += 10
-        updateScreen()
-    }
-
-    fun onBetdown10ButtonTapped() {
-        if(bets > 10){
-            bets -= 10
+    fun onBetButtonTapped(bet:Int) {
+        bets += bet
+        if(bets < 10){
+            bets = 10
         }
         updateScreen()
     }
+
+
 
     fun onStartButtonTapped(view: View?) {
         //BETSとCOINSを渡す

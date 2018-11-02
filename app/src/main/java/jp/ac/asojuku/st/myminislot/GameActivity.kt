@@ -37,6 +37,14 @@ class GameActivity : AppCompatActivity() {
             mapOf("mark" to "BigWin", "mul" to 150, "image" to R.drawable.bigwin, "free" to 20),
             mapOf("mark" to "Seven", "mul" to 777, "image" to R.drawable.seven, "free" to 50)
     )
+
+    //リール
+    var reels: List<Array<Int>> = listOf(
+            arrayOf(0, 0, 1, 4, 3, 2, 5, 1, 1),
+            arrayOf(1, 2, 3, 5, 4, 0, 1, 0, 1),
+            arrayOf(1, 2, 5, 5, 4, 3, 2, 0, 1)
+    )
+
     val markSize = marks.size //ランダム用
     var reel = arrayOf(-1, -1, -1, -1) //0以上でボタンを押した状態
     var stopCnt = 0 //いくつ止めたか判定用
@@ -61,12 +69,11 @@ class GameActivity : AppCompatActivity() {
         str_myBets.text = bets.toString()
         //nextGameで画面の初期化
         nextGame()
-
     }
 
 
     fun onStopButtonTapped(reelNo: Int) {
-        if(!checkCoin()){//コインが足りない
+        if (!checkCoin()) {//コインが足りない
             str_comment.text = "You haven't coin.."
             return
         }
@@ -76,27 +83,31 @@ class GameActivity : AppCompatActivity() {
             if (btn_allStop.text == "NEXT GAME") {
                 nextGame()
             } else {
-                mHandler.postDelayed({
-                    onStopButtonTapped(left)
-                }, 120)
-                mHandler.postDelayed({
-                    onStopButtonTapped(center)
-                }, 240)
-                mHandler.postDelayed({
-                    onStopButtonTapped(right)
-                }, 360)
+//                mHandler.postDelayed({
+//                    onStopButtonTapped(left)
+//                }, 120)
+//                mHandler.postDelayed({
+//                    onStopButtonTapped(center)
+//                }, 240)
+//                mHandler.postDelayed({
+//                    onStopButtonTapped(right)
+//                }, 360)
+                //↓↓↓↓↓↓
+                //処理を簡略化
+                for (i in 0..2) {
+                    mHandler.postDelayed({ onStopButtonTapped(i) }, 120 * i.toLong())
+                }
             }
         } else {
 
-            var selectMark = (Math.random() * markSize).toInt()
-
-            //        img_slot_left.setImageResource(R.drawable.banana)
-            val imageResources = Integer.parseInt((marks[selectMark]["image"].toString()))
 
             //すでに押されていないか判定
             if (reel[reelNo] >= 0) {
-                //すでに押されている場合（特に何もしない）
+                runReel(0)
+                str_comment.text = "This Button is stopped..."//すでに押されている場合（特に何もしない）
             } else {
+                var selectMark = (Math.random() * markSize).toInt()
+                val imageResources = Integer.parseInt((marks[selectMark]["image"].toString()))
 
                 when (reelNo) { //止めたヤツの画像の絵柄を上書き
                     0 -> {
@@ -122,6 +133,12 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    //柄を止める処理
+    fun selectMark() {
+        var selectMark = (Math.random() * markSize).toInt()
+        val imageResources = Integer.parseInt((marks[selectMark]["image"].toString()))
     }
 
     //柄が揃っているかの判定
@@ -157,7 +174,7 @@ class GameActivity : AppCompatActivity() {
         //所持コインの変動
         myCoins += returnCoin
         str_myCoins.text = myCoins.toString()
-
+        saveData()
         return
     }
 
@@ -207,13 +224,32 @@ class GameActivity : AppCompatActivity() {
     }
 
     //コインが足りるかどうかの判定
-    fun checkCoin():Boolean{
+    fun checkCoin(): Boolean {
         var rt = true
-        if(myCoins < bets){
+        if (myCoins < bets) {
             rt = false
         }
         return rt
     }
+
+    fun runReel(reelNo: Int) {
+
+        val thread = Thread(Runnable {
+
+            for (i in 0..reels[reelNo].size-1) {
+                val selectedMark = reels[0][i]
+                var imageAddr = Integer.parseInt((marks[selectedMark]["image"].toString()))
+                mHandler.post {
+                    img_slot_left.setImageResource(imageAddr)
+                }
+                Thread.sleep(50)
+            }
+
+
+    })
+
+    thread.start()
+}
 
 
 }
