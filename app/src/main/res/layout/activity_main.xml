@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/Title" />
+        tools:text="@string/Title" />,
 
     <Button
         android:id="@+id/btn_reset"

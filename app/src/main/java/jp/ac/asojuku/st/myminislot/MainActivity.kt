@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
     var myCoins = 0;
     var bets = 100;
 
-
+//aaaaaa
     override fun onCreate(savedInstanceState: Bundle?) {
         readData() //myCoinsの読み込み
 
